@@ -12,6 +12,7 @@ import (
 )
 
 func FirstHandler(w http.ResponseWriter, r *http.Request) {
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
 	http.ServeFile(w, r, filepath.Join("..", "index.html"))
 }
 
@@ -66,7 +67,9 @@ func SecondHandler(w http.ResponseWriter, r *http.Request) {
 <body>
 <p>Конвертация завершена.</p>
 <p>Результат записан в файл: <strong>%s</strong></p>
+<p>Код Морзе: %s</p>
+<p>Исходный текст: %s</p>
 </body>
-</html>`, filename)
+</html>`, filename, result, string(content))
 	w.Write([]byte(response))
 }
