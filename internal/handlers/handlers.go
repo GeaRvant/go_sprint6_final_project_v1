@@ -13,8 +13,7 @@ import (
 
 func FirstHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	//http.ServeFile(w, r, filepath.Join("..", "index.html"))
-	http.ServeFile(w, r, filepath.Join(`D:\Study\go_sprint6_final_project_v1\index.html`))
+	http.ServeFile(w, r, filepath.Join("..", "index.html"))
 }
 
 func SecondHandler(w http.ResponseWriter, r *http.Request) {
