@@ -13,12 +13,13 @@ import (
 )
 
 func FirstHandler(w http.ResponseWriter, r *http.Request) {
+	cwd, err := os.Getwd()
 	if r.Method != http.MethodGet {
 		http.Error(w, "некорректный метод", http.StatusMethodNotAllowed)
 		return
 	}
 	//filePath := filepath.Join("..", "index.html")
-	filePath := filepath.Join("index.html")
+	filePath := filepath.Join(cwd, "index.html")
 	file, err := os.Open(filePath)
 	if err != nil {
 		http.Error(w, "файл не найден", http.StatusNotFound)
