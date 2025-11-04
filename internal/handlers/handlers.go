@@ -14,6 +14,10 @@ import (
 
 func FirstHandler(w http.ResponseWriter, r *http.Request) {
 	cwd, err := os.Getwd()
+	if err != nil {
+		http.Error(w, "Internal Server Error", http.StatusInternalServerError)
+		return
+	}
 	if r.Method != http.MethodGet {
 		http.Error(w, "некорректный метод", http.StatusMethodNotAllowed)
 		return
