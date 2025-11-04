@@ -12,8 +12,24 @@ import (
 )
 
 func FirstHandler(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodGet {
+		http.Error(w, "некорректный метод", http.StatusMethodNotAllowed)
+		return
+	}
+	filePath := filepath.Join("..", "index.html")
+	file, err := os.Open(filePath)
+	if err != nil {
+		http.Error(w, "файл не найден", http.StatusNotFound)
+		return
+	}
+	defer file.Close()
+	fi, err := file.Stat()
+	if err != nil {
+		http.Error(w, "ошибка получения информации о файле", http.StatusInternalServerError)
+		return
+	}
 	w.Header().Set("Content-Type", "text/html; charset=utf-8")
-	http.ServeFile(w, r, filepath.Join("..", "index.html"))
+	http.ServeContent(w, r, "index.html", fi.ModTime(), file)
 }
 
 func SecondHandler(w http.ResponseWriter, r *http.Request) {
