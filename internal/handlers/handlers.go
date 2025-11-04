@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"fmt"
+	"html"
 	"io"
 	"net/http"
 	"os"
@@ -16,7 +17,8 @@ func FirstHandler(w http.ResponseWriter, r *http.Request) {
 		http.Error(w, "некорректный метод", http.StatusMethodNotAllowed)
 		return
 	}
-	filePath := filepath.Join("..", "index.html")
+	//filePath := filepath.Join("..", "index.html")
+	filePath := filepath.Join("index.html")
 	file, err := os.Open(filePath)
 	if err != nil {
 		http.Error(w, "файл не найден", http.StatusNotFound)
@@ -45,7 +47,7 @@ func SecondHandler(w http.ResponseWriter, r *http.Request) {
 
 	file, _, err := r.FormFile("myFile")
 	if err != nil {
-		http.Error(w, "невозможно полкчить файл из формы", http.StatusBadRequest)
+		http.Error(w, "невозможно получить файл из формы", http.StatusBadRequest)
 		return
 	}
 	defer file.Close()
@@ -76,7 +78,10 @@ func SecondHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	filenameEsc := html.EscapeString(filename)
+	resultEsc := html.EscapeString(result)
+	contentEsc := html.EscapeString(string(content))
+
 	response := fmt.Sprintf(`
 <html>
 <head><title>Результат загрузки</title></head>
@@ -86,6 +91,11 @@ func SecondHandler(w http.ResponseWriter, r *http.Request) {
 <p>Код Морзе: %s</p>
 <p>Исходный текст: %s</p>
 </body>
-</html>`, filename, result, string(content))
-	w.Write([]byte(response))
+</html>`, filenameEsc, resultEsc, contentEsc)
+
+	w.Header().Set("Content-Type", "text/html; charset=utf-8")
+	_, err = w.Write([]byte(response))
+	if err != nil {
+		fmt.Println("Ошибка при отправке ответа:", err)
+	}
 }
